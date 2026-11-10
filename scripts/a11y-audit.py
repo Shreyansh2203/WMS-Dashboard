@@ -11,6 +11,8 @@ import re
 
 from playwright.sync_api import sync_playwright
 
+from _launch import launch_chromium
+
 BASE = "http://localhost:4173/"
 
 ACTIVE = r"""
@@ -34,7 +36,7 @@ ACTIVE = r"""
 def main() -> int:
     out: dict = {"tabOrderDesktop": [], "skipLink": None, "combobox": None, "bell": None, "stream": None, "mobile": None, "landmarks": None, "headings": None, "sortLabels": None, "errors": []}
     with sync_playwright() as p:
-        b = p.chromium.launch(headless=True, channel="chrome")
+        b = launch_chromium(p)
         page = b.new_page(viewport={"width": 1440, "height": 900})
         errors: list[str] = []
         page.on("console", lambda m: errors.append(m.text) if m.type == "error" else None)

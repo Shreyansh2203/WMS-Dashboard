@@ -12,11 +12,14 @@ mobile card list at 375, reduced motion, print chrome, 3 data-table disclosures.
 from __future__ import annotations
 
 import json
+import os
 import re
 import sys
 from playwright.sync_api import sync_playwright
 
-BASE = "http://localhost:4173/"
+from _launch import launch_chromium
+
+BASE = os.environ.get("RECON_BASE_URL", "http://localhost:4173/").rstrip("/") + "/"
 HEADLESS = True
 
 passed = 0
@@ -36,7 +39,7 @@ def ok(name: str, good: bool, detail: str = "") -> None:
 
 def main() -> int:
     with sync_playwright() as p:
-        b = p.chromium.launch(headless=HEADLESS, channel="chrome")
+        b = launch_chromium(p)
         page = b.new_page(viewport={"width": 1440, "height": 900})
 
         # 0. reset storage, start from a known state

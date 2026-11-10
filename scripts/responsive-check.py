@@ -14,6 +14,8 @@ import sys
 
 from playwright.sync_api import sync_playwright
 
+from _launch import launch_chromium
+
 BASE = "http://localhost:4173/"
 OUT = pathlib.Path(os.environ.get("TEMP", ".")) / "recon-responsive"
 OUT.mkdir(parents=True, exist_ok=True)
@@ -122,7 +124,7 @@ TABLE_MEASURE = r"""
 def main() -> int:
     report = {"base": BASE, "viewports": [], "discrepancies": None, "rtl": None, "reducedMotion": None, "errors": []}
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True, channel="chrome")
+        browser = launch_chromium(p)
         context = browser.new_context(viewport={"width": 1440, "height": 900})
         page = context.new_page()
         console_errors: list[str] = []

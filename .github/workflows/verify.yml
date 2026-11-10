@@ -1,0 +1,53 @@
+name: verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      TEMP: /tmp
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Chrome (scripts use channel="chrome", with bundled-Chromium fallback)
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      - name: Install Python Playwright
+        run: |
+          pip install playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Install JS dependencies
+        run: npm ci
+
+      - name: Typecheck + production build
+        run: |
+          npm run typecheck
+          npm run build
+
+      - name: Serve the production build
+        run: |
+          nohup npx vite preview --port 4173 --strictPort > /tmp/preview.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:4173/ > /dev/null; then echo "preview is up"; exit 0; fi
+            sleep 1
+          done
+          echo "preview failed to start"; cat /tmp/preview.log; exit 1
+
+      - name: Run verification gate
+        run: python scripts/ci-gate.py

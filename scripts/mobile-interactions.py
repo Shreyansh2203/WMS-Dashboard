@@ -6,7 +6,9 @@ import os
 
 from playwright.sync_api import sync_playwright
 
-BASE = "http://localhost:4173/"
+from _launch import launch_chromium
+
+BASE = os.environ.get("RECON_BASE_URL", "http://localhost:4173/").rstrip("/") + "/"
 VIEWPORT = int(os.environ.get("VP", "320"))
 RECT = "el => { const r = el.getBoundingClientRect(); return { left: Math.round(r.left), right: Math.round(r.right), top: Math.round(r.top), bottom: Math.round(r.bottom), width: Math.round(r.width), height: Math.round(r.height) }; }"
 
@@ -19,7 +21,7 @@ def measure(page, selector):
 def main():
     out = {"viewport": VIEWPORT, "overlays": {}, "drawer": None, "focusReturn": None, "errors": []}
     with sync_playwright() as p:
-        b = p.chromium.launch(headless=True, channel="chrome")
+        b = launch_chromium(p)
         page = b.new_page(viewport={"width": VIEWPORT, "height": 900})
         page.goto(BASE, wait_until="networkidle")
         page.wait_for_timeout(400)

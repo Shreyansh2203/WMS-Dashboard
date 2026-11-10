@@ -4,11 +4,13 @@ import os
 
 from playwright.sync_api import sync_playwright
 
-BASE = "http://localhost:4173/?worst=1"
+from _launch import launch_chromium
+
+BASE = os.environ.get("RECON_BASE_URL", "http://localhost:4173/").rstrip("/") + "/?worst=1"
 OUT = os.path.join(os.environ.get("TEMP", "."), "recon-responsive", "worst-320.png")
 
 with sync_playwright() as p:
-    b = p.chromium.launch(headless=True, channel="chrome")
+    b = launch_chromium(p)
     page = b.new_page(viewport={"width": 320, "height": 720})
     page.goto(BASE, wait_until="networkidle")
     page.wait_for_timeout(600)
