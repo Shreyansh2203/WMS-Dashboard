@@ -119,6 +119,19 @@ def main() -> int:
     e2e = subprocess.run([sys.executable, str(HERE / "e2e.py")], capture_output=True, text=True, cwd=ROOT)
     check("e2e suite passes (14 assertions)", e2e.returncode == 0, e2e.stdout[-500:])
 
+    # 6. WCAG 1.4.12 text spacing (inspect tier)
+    spacing, rc = run_json("zoom-and-spacing-check.py")
+    if spacing is None:
+        check("text-spacing probe produced JSON", False, f"rc={rc}")
+    else:
+        ts = spacing.get("text_spacing") or {}
+        non_sr = [c for c in ts.get("clipped", []) if "sr-only" not in c.get("cls", "")]
+        check("WCAG text spacing: no page overflow, no visible clipping", ts.get("overflowX") == 0 and not non_sr, json.dumps(non_sr)[:200])
+
+    # 7. lazy-load: queue view must not fetch the recharts chunk
+    lazy = subprocess.run([sys.executable, str(HERE / "lazy-load-check.py")], capture_output=True, text=True, cwd=ROOT)
+    check("recharts lazy-loaded (queue avoids the 114KB chunk)", lazy.returncode == 0, lazy.stdout[-300:])
+
     print()
     if failures:
         print(f"ci-gate FAILED: {len(failures)} check(s): {', '.join(failures)}")

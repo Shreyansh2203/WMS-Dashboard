@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import ChartCard from './ChartCard';
 import ChartDataTable from './ChartDataTable';
 import { TYPE_STYLE, type TypeStat } from '../data/mock';
@@ -8,7 +9,7 @@ interface TypeMixProps {
   rangeDays: number;
 }
 
-export default function TypeMix({ stats, rangeDays }: TypeMixProps) {
+export default memo(function TypeMix({ stats, rangeDays }: TypeMixProps) {
   const totalValue = stats.reduce((a, s) => a + s.value, 0);
   const totalItems = stats.reduce((a, s) => a + s.items, 0);
   const sorted = [...stats].sort((a, b) => b.value - a.value);
@@ -91,4 +92,4 @@ export default function TypeMix({ stats, rangeDays }: TypeMixProps) {
       </div>
     </ChartCard>
   );
-}
+});

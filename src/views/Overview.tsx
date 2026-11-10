@@ -1,11 +1,13 @@
-import { useMemo } from 'react';
+import { lazy, Suspense, useMemo } from 'react';
 import KpiStrip from '../components/KpiStrip';
-import AccuracyTrend from '../components/AccuracyTrend';
 import TypeMix from '../components/TypeMix';
 import ZoneVariance from '../components/ZoneVariance';
 import Insights from '../components/Insights';
 import ChartCard from '../components/ChartCard';
 import DiscrepancyTable from '../components/DiscrepancyTable';
+
+// recharts is the heaviest dependency; load it only when the trend is rendered
+const AccuracyTrend = lazy(() => import('../components/AccuracyTrend'));
 import { type DayPoint, type Discrepancy, type Site, type WindowSummary, zoneStats, typeStats, buildInsights } from '../data/mock';
 
 export type RangeDays = 7 | 28 | 90;
@@ -78,7 +80,11 @@ export default function Overview({
       </div>
 
       <div className="grid grid-cols-12 gap-4">
-        <div className="rise rise-3 col-span-12 xl:col-span-8"><AccuracyTrend series={series} rangeDays={rangeDays} /></div>
+        <div className="rise rise-3 col-span-12 xl:col-span-8">
+          <Suspense fallback={<div className="panel h-[320px] shimmer" role="status" aria-label="Loading accuracy chart" />}>
+            <AccuracyTrend series={series} rangeDays={rangeDays} />
+          </Suspense>
+        </div>
         <div className="rise rise-3 col-span-12 md:col-span-6 xl:col-span-4"><TypeMix stats={derived.types} rangeDays={rangeDays} /></div>
         <div className="rise rise-4 col-span-12 md:col-span-6 xl:col-span-7"><ZoneVariance stats={derived.zones} rangeDays={rangeDays} /></div>
         <div className="rise rise-4 col-span-12 xl:col-span-5"><Insights insights={derived.insights} onAction={onJumpToQueue} /></div>

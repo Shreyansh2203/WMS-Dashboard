@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, useDeferredValue } from 'react';
 import { LayoutDashboard, TableProperties } from 'lucide-react';
 import Sidebar, { type View } from './components/Sidebar';
 import TopBar from './components/TopBar';
@@ -81,6 +81,7 @@ export default function App() {
   const [view, setView] = useState<View>(readViewParam);
   const [rangeDays, setRangeDays] = useState<RangeDays>(28);
   const [query, setQuery] = useState('');
+  const deferredQuery = useDeferredValue(query);
   const [openId, setOpenId] = useState<string | null>(null);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [switching, setSwitching] = useState(false);
@@ -283,6 +284,9 @@ export default function App() {
   }, [records, setRecord]);
 
   const handleOpenDiscrepancy = useCallback((id: string) => setOpenId(id), []);
+  const handleOpenRecord = useCallback((d: Discrepancy) => setOpenId(d.id), []);
+  const handleJumpToQueue = useCallback((q: string) => { setQuery(q); setView('discrepancies'); }, []);
+  const handleViewAll = useCallback(() => setView('discrepancies'), []);
 
   const selectSite = useCallback((id: string) => {
     setSiteId((current) => {
@@ -406,20 +410,20 @@ export default function App() {
               records={records}
               rangeDays={rangeDays}
               onRangeChange={setRangeDays}
-              query={query}
+              query={deferredQuery}
               onQueryChange={setQuery}
-              onOpen={(d) => setOpenId(d.id)}
-              onViewAll={() => setView('discrepancies')}
-              onJumpToQueue={(q) => { setQuery(q); setView('discrepancies'); }}
+              onOpen={handleOpenRecord}
+              onViewAll={handleViewAll}
+              onJumpToQueue={handleJumpToQueue}
               activeId={openId}
             />
           ) : (
             <Discrepancies
               site={site}
               records={records}
-              query={query}
+              query={deferredQuery}
               onQueryChange={setQuery}
-              onOpen={(d) => setOpenId(d.id)}
+              onOpen={handleOpenRecord}
               activeId={openId}
               onBulkAssign={handleBulkAssign}
               onBulkResolve={handleBulkResolve}

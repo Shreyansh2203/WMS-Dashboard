@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { OctagonAlert, TrendingUp, TrendingDown, MapPin, ScanLine, UserRoundX, ArrowRight } from 'lucide-react';
 import ChartCard from './ChartCard';
 import type { Insight } from '../data/mock';
@@ -27,7 +28,7 @@ interface InsightsProps {
 const rowClass =
   'group flex w-full items-start gap-3 divide-y divide-edge/70 py-2.5 text-start transition-colors first:pt-0 last:pb-0 hover:bg-panel2 focus-visible:bg-panel2';
 
-export default function Insights({ insights, onAction }: InsightsProps) {
+export default memo(function Insights({ insights, onAction }: InsightsProps) {
   const actionable = insights.filter((i) => i.action).length;
   return (
     <ChartCard
@@ -77,4 +78,4 @@ export default function Insights({ insights, onAction }: InsightsProps) {
       </ol>
     </ChartCard>
   );
-}
+});

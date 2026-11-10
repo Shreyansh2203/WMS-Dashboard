@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import ChartCard from './ChartCard';
 import ChartDataTable from './ChartDataTable';
 import type { ZoneStat } from '../data/mock';
@@ -8,7 +9,7 @@ interface ZoneVarianceProps {
   rangeDays: number;
 }
 
-export default function ZoneVariance({ stats, rangeDays }: ZoneVarianceProps) {
+export default memo(function ZoneVariance({ stats, rangeDays }: ZoneVarianceProps) {
   const active = stats.filter((z) => z.items > 0);
   const maxSide = Math.max(1, ...active.map((z) => Math.max(z.shortageValue, z.overageValue)));
   const total = active.reduce((a, z) => a + z.value, 0);
@@ -91,4 +92,4 @@ export default function ZoneVariance({ stats, rangeDays }: ZoneVarianceProps) {
       />
     </ChartCard>
   );
-}
+});

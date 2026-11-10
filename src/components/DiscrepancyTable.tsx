@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import {
   ArrowDown, ArrowUp, ArrowUpDown, ChevronDown, ChevronLeft, ChevronRight,
   Download, PackageSearch, ArrowRight, Eye,
@@ -55,7 +55,7 @@ const columns: { label: string; k: SortKey; align?: 'left' | 'right' | 'center';
   { label: 'Type', k: 'type' },
 ];
 
-export default function DiscrepancyTable({ records, density, query, onQueryChange, onOpen, onViewAll, siteId, activeId, enableBulk = false, onBulkAssign, onBulkResolve, onBulkExport }: DiscrepancyTableProps) {
+export default memo(function DiscrepancyTable({ records, density, query, onQueryChange, onOpen, onViewAll, siteId, activeId, enableBulk = false, onBulkAssign, onBulkResolve, onBulkExport }: DiscrepancyTableProps) {
   const full = density === 'full';
   const [typeFilter, setTypeFilter] = useState<'' | DiscrepancyType>('');
   const [zoneFilter, setZoneFilter] = useState('');
@@ -413,7 +413,7 @@ export default function DiscrepancyTable({ records, density, query, onQueryChang
                     </button>
                     </div>
                   </td>
-                  <td className="max-w-[230px] px-3 py-2">
+                  <td className="max-w-[280px] px-3 py-2">
                     <div className="truncate text-[12px] font-medium text-text" title={d.item}>{d.item}</div>
                     <div className="font-mono text-[12px] text-faint">{d.sku} · {d.abc}-class</div>
                   </td>
@@ -482,4 +482,4 @@ export default function DiscrepancyTable({ records, density, query, onQueryChang
       </div>
     </div>
   );
-}
+});

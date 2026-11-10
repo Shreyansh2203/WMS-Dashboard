@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { ReactNode } from 'react';
 import { ArrowDownRight, ArrowUpRight, Minus } from 'lucide-react';
 import type { WindowSummary } from '../data/mock';
@@ -47,7 +48,7 @@ function Card({ label, value, footer, title }: { label: string; value: ReactNode
   );
 }
 
-export default function KpiStrip({ summary, rangeDays, openCount, investigatingCount, criticalCount, unassignedCount }: KpiStripProps) {
+export default memo(function KpiStrip({ summary, rangeDays, openCount, investigatingCount, criticalCount, unassignedCount }: KpiStripProps) {
   const accuracy = useTween(summary.accuracy);
   const countsDone = useTween(summary.countsDone);
   const valueImpact = useTween(summary.valueImpact);
@@ -132,4 +133,4 @@ export default function KpiStrip({ summary, rangeDays, openCount, investigatingC
       />
     </div>
   );
-}
+});

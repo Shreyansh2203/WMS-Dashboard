@@ -22,6 +22,7 @@
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
@@ -76,7 +77,7 @@ body {
 }
 
 .kpi-card {
-  transition: border-color 160ms ease;
+  transition: border-color 160ms var(--ease-out);
 }
 @media (hover: hover) and (pointer: fine) {
   .kpi-card:hover { border-color: var(--color-edge2); }
@@ -149,7 +150,7 @@ button:not(:disabled):active {
   color: var(--color-dim);
   padding: 4px 12px;
   border-radius: 7px;
-  transition: color 150ms ease, background-color 150ms ease;
+  transition: color 150ms var(--ease-out), background-color 150ms var(--ease-out);
 }
 @media (hover: hover) and (pointer: fine) {
   .seg button:hover { color: var(--color-text); }
@@ -180,7 +181,7 @@ button:not(:disabled):active {
 
 /* Table row hover — surface step only, high frequency = instant-ish */
 .row-hover {
-  transition: background-color 120ms ease;
+  transition: background-color 120ms var(--ease-out);
 }
 .row-hover:hover, .row-hover:focus-within {
   background: var(--color-panel2);
@@ -227,12 +228,18 @@ tr.row-selected .col-pinned, tr.row-selected:hover .col-pinned { background: #21
   to { transform: translateX(0); opacity: 1; }
 }
 .anim-drawer { animation: drawer-in 260ms var(--ease-drawer); }
+/* RTL: the drawer docks to the inline-end (left) edge, so it slides in from the left */
+@keyframes drawer-in-rtl {
+  from { transform: translateX(-48px); opacity: 0.4; }
+  to { transform: translateX(0); opacity: 1; }
+}
+[dir="rtl"] .anim-drawer { animation-name: drawer-in-rtl; }
 
 @keyframes overlay-in {
   from { opacity: 0; }
   to { opacity: 1; }
 }
-.anim-overlay { animation: overlay-in 160ms ease; }
+.anim-overlay { animation: overlay-in 160ms var(--ease-out); }
 
 @keyframes pop-in {
   from { transform: translateY(-3px) scale(0.98); opacity: 0; }
@@ -272,10 +279,13 @@ tr.row-selected .col-pinned, tr.row-selected:hover .col-pinned { background: #21
     animation: none;
   }
   .rise { opacity: 1; transform: none; }
+  /* keep color/state feedback, drop movement and filter work */
   *, *::before, *::after {
-    transition-duration: 0.01ms !important;
+    transition-property: color, background-color, border-color, opacity, box-shadow !important;
+    transition-duration: 120ms !important;
     scroll-behavior: auto !important;
   }
+  button:not(:disabled):active { transform: none; }
 }
 @media (hover: none), (pointer: coarse) {
   .row-hover:hover { background: transparent; }

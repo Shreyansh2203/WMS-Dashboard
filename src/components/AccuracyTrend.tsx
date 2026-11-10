@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import {
   Area, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from 'recharts';
@@ -15,7 +15,7 @@ interface AccuracyTrendProps {
   rangeDays: number;
 }
 
-export default function AccuracyTrend({ series, rangeDays }: AccuracyTrendProps) {
+export default memo(function AccuracyTrend({ series, rangeDays }: AccuracyTrendProps) {
   const data = useMemo(() => {
     const current = series.slice(-rangeDays);
     const prior = series.slice(-rangeDays * 2, -rangeDays);
@@ -142,4 +142,4 @@ export default function AccuracyTrend({ series, rangeDays }: AccuracyTrendProps)
       />
     </ChartCard>
   );
-}
+});
