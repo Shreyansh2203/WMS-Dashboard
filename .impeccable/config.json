@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "src/components/TypeMix.tsx"
+        ],
+        "createdAt": "2026-11-10T07:02:24.739Z",
+        "reason": "Stacked variance composition bar; segments are data marks with 2px surface gaps, not an AI side-tab accent"
+      }
+    ]
+  }
+}

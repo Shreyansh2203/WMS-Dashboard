@@ -1,0 +1,350 @@
+@import "tailwindcss";
+
+@theme {
+  /* Warm graphite ramp — surfaces stay neutral, the world lives in the accent (sodium dock light) */
+  --color-ink: #131110;
+  --color-panel: #1A1815;
+  --color-panel2: #1F1D1A;
+  --color-panel3: #252320;
+  --color-edge: #2A2723;
+  --color-edge2: #3B3831;
+  --color-text: #ECE8DF;
+  --color-dim: #ABA69B;
+  --color-faint: #9B968C;
+  --color-amber: #F2B33D;
+  --color-amber-deep: #D9A02F;
+  --color-good: #41D99A;
+  --color-bad: #F26D5B;
+  --color-info: #6FA8FF;
+  --color-violet: #B49CFF;
+
+  --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+html {
+  color-scheme: dark;
+  scroll-padding-block-start: 60px;
+  overscroll-behavior-y: none;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  background: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.tnum {
+  font-variant-numeric: tabular-nums slashed-zero;
+}
+
+.balance { text-wrap: balance; }
+.pretty { text-wrap: pretty; }
+
+::selection {
+  background: rgba(242, 179, 61, 0.28);
+  color: #FFF7E0;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-amber);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #3B3831 transparent;
+  -webkit-tap-highlight-color: transparent;
+}
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-thumb { background: #3B3831; border-radius: 8px; }
+*::-webkit-scrollbar-track { background: transparent; }
+
+/* ── Surfaces: elevation declared once — hairline border, no shadow ─────────── */
+.panel {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.018), rgba(255, 255, 255, 0) 72px), var(--color-panel);
+  border: 1px solid var(--color-edge);
+  border-radius: 14px;
+}
+
+.kpi-card {
+  transition: border-color 160ms ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .kpi-card:hover { border-color: var(--color-edge2); }
+}
+
+/* ── Controls ─────────────────────────────────────────────────────────────── */
+button, [role="button"] {
+  transition: transform 150ms var(--ease-out);
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+button:not(:disabled):active {
+  transform: scale(0.96);
+}
+
+/* Keycap hint */
+.key {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 6px 2px;
+  border: 1px solid var(--color-edge2);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  background: var(--color-panel2);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-dim);
+  line-height: 1.4;
+}
+
+/* Pills — dot + label, sentence case, meaning never color alone */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.pill .dot { width: 5px; height: 5px; border-radius: 999px; background: currentColor; }
+.pill-open     { color: #F2B33D; background: rgba(242,179,61,0.08); border-color: rgba(242,179,61,0.26); }
+.pill-invest   { color: #6FA8FF; background: rgba(111,168,255,0.08); border-color: rgba(111,168,255,0.26); }
+.pill-resolved { color: #41D99A; background: rgba(65,217,154,0.08); border-color: rgba(65,217,154,0.24); }
+.pill-critical { color: #FF8A7A; background: rgba(242,109,91,0.10); border-color: rgba(242,109,91,0.34); }
+.pill-high     { color: #F2B33D; background: rgba(242,179,61,0.08); border-color: rgba(242,179,61,0.26); }
+.pill-medium   { color: #9B968C; background: rgba(155,150,140,0.07); border-color: rgba(155,150,140,0.2); }
+.pill-low      { color: #9B968C; background: rgba(155,150,140,0.05); border-color: rgba(155,150,140,0.16); }
+.pill-abc      { color: #C9C4B8; background: rgba(155,150,140,0.07); border-color: rgba(155,150,140,0.18); font-family: var(--font-mono); font-weight: 500; }
+
+/* Segmented control — one step up, surface + inset hairline when active */
+.seg {
+  display: inline-flex;
+  background: var(--color-panel2);
+  border: 1px solid var(--color-edge);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 2px;
+}
+.seg button {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-dim);
+  padding: 4px 12px;
+  border-radius: 7px;
+  transition: color 150ms ease, background-color 150ms ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .seg button:hover { color: var(--color-text); }
+}
+.seg button[aria-pressed="true"] {
+  background: var(--color-panel3);
+  color: var(--color-amber);
+  box-shadow: inset 0 0 0 1px var(--color-edge2);
+}
+
+/* Skip link — first focusable element, visible on focus only */
+.skip-link {
+  position: fixed;
+  left: 12px;
+  top: -48px;
+  z-index: 60;
+  border-radius: 8px;
+  background: var(--color-amber);
+  color: #1B1408;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  transition: top 150ms var(--ease-out);
+}
+.skip-link:focus {
+  top: 12px;
+}
+
+/* Table row hover — surface step only, high frequency = instant-ish */
+.row-hover {
+  transition: background-color 120ms ease;
+}
+.row-hover:hover, .row-hover:focus-within {
+  background: var(--color-panel2);
+}
+
+/* Sticky table chrome */
+.thead-sticky th {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--color-panel);
+}
+.col-pinned {
+  position: sticky;
+  inset-inline-start: 0;
+  z-index: 4;
+  background: var(--color-panel);
+  box-shadow: 1px 0 0 0 var(--color-edge);
+}
+.col-pinned-right {
+  position: sticky;
+  inset-inline-end: 0;
+  z-index: 4;
+  background: var(--color-panel);
+  box-shadow: -1px 0 0 0 var(--color-edge);
+}
+tr.row-hover:hover .col-pinned-right, tr.row-hover:focus-within .col-pinned-right { background: var(--color-panel2); }
+.thead-sticky th.col-pinned-right { z-index: 6; }
+tr.row-selected .col-pinned-right, tr.row-selected:hover .col-pinned-right { background: #211E18; }
+tr.row-hover:hover .col-pinned, tr.row-hover:focus-within .col-pinned { background: var(--color-panel2); }
+.thead-sticky th.col-pinned { z-index: 6; }
+tr.row-selected .col-pinned, tr.row-selected:hover .col-pinned { background: #211E18; }
+
+/* ── Toast ───────────────────────────────────────────────────────────────── */
+@keyframes toast-in {
+  from { transform: translateY(10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.anim-toast { animation: toast-in 220ms var(--ease-out); }
+
+/* Drawer — iOS-like curve, 48px slide, never from scale(0) */
+@keyframes drawer-in {
+  from { transform: translateX(48px); opacity: 0.4; }
+  to { transform: translateX(0); opacity: 1; }
+}
+.anim-drawer { animation: drawer-in 260ms var(--ease-drawer); }
+
+@keyframes overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.anim-overlay { animation: overlay-in 160ms ease; }
+
+@keyframes pop-in {
+  from { transform: translateY(-3px) scale(0.98); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+.anim-pop { animation: pop-in 150ms var(--ease-out); }
+
+/* One authored entrance — fade + 8px rise, weighted beats, once */
+@keyframes fade-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.rise {
+  animation: fade-rise 340ms var(--ease-out) both;
+}
+.rise-1 { animation-delay: 0ms; }
+.rise-2 { animation-delay: 60ms; }
+.rise-3 { animation-delay: 110ms; }
+.rise-4 { animation-delay: 150ms; }
+.rise-5 { animation-delay: 190ms; }
+
+/* Skeleton shimmer — single pass, opacity only (compositor-friendly), loading state only */
+@keyframes shimmer {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+.shimmer {
+  background: var(--color-panel2);
+  animation: shimmer 1.15s ease-in-out infinite;
+  border-radius: 10px;
+}
+
+/* Live dot — intentionally static: the word "Live" and the seconds counter carry the meaning */
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-drawer, .anim-overlay, .anim-toast, .anim-pop, .rise, .shimmer {
+    animation: none;
+  }
+  .rise { opacity: 1; transform: none; }
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+@media (hover: none), (pointer: coarse) {
+  .row-hover:hover { background: transparent; }
+}
+
+[dir="rtl"] .col-pinned { box-shadow: -1px 0 0 0 var(--color-edge); }
+[dir="rtl"] .col-pinned-right { box-shadow: 1px 0 0 0 var(--color-edge); }
+[dir="rtl"] .flip-rtl { transform: scaleX(-1); }
+
+/* ── Print — the count sheet ─────────────────────────────────────────────── */
+@media print {
+  @page { size: letter; margin: 12mm 14mm; }
+
+  html, body { background: #fff !important; color: #111 !important; }
+  *, *::before, *::after {
+    background: transparent !important;
+    color: #111 !important;
+    border-color: #bbb !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  /* chrome that cannot work on paper */
+  aside, nav, header, [role='dialog'], [role='presentation'], .skip-link, .anim-toast, .no-print {
+    display: none !important;
+  }
+  select, input, svg.recharts-surface { display: none !important; }
+
+  /* the grid stays a grid on paper */
+  main { overflow: visible !important; }
+  table { font-size: 9pt; min-width: 0 !important; width: 100% !important; }
+  th, td { border-bottom: 1px solid #ddd !important; }
+  .col-pinned, .col-pinned-right, .thead-sticky th { position: static !important; box-shadow: none !important; }
+  tr { break-inside: avoid; }
+  thead { display: table-header-group; }
+
+  /* signature lines at the end of the sheet */
+  main::after {
+    content: 'Counted by ______________________   Supervisor sign-off ______________________   Date ____________';
+    display: block;
+    margin-top: 18mm;
+    font-size: 10pt;
+    white-space: pre-wrap;
+  }
+}
+
+/* ── Forced colors (Windows High Contrast) — semantics move to the system palette ── */
+@media (forced-colors: active) {
+  html, body { background: Canvas; color: CanvasText; }
+
+  .panel, .kpi-card, aside, header, nav, [role='dialog'], button, a {
+    border: 1px solid CanvasText !important;
+    background: Canvas !important;
+    color: CanvasText !important;
+  }
+  .col-pinned, .col-pinned-right, .thead-sticky th {
+    border-inline-end: 1px solid CanvasText !important;
+    box-shadow: none !important;
+  }
+  :focus-visible { outline: 2px solid Highlight !important; outline-offset: 2px !important; }
+
+  /* meaning is never colour alone: restore label contrast by flattening tokens */
+  .text-text, .text-dim, .text-faint, .text-amber, .text-good, .text-bad, .text-info, .text-violet {
+    color: CanvasText !important;
+  }
+  .pill { border: 1px solid CanvasText !important; color: CanvasText !important; }
+  .dot { background: CanvasText !important; }
+  button[disabled] { color: GrayText !important; border-color: GrayText !important; }
+  input, select { background: Field !important; color: FieldText !important; border-color: CanvasText !important; }
+}
