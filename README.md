@@ -28,6 +28,9 @@ npm run e2e                          # 14 critical assertions, exits non-zero on
 npm run verify                        # full gate: typecheck, build, all probes, e2e
 ```
 
+**CI:** `.github/workflows/verify.yml` runs the same gate on every push to `main`
+and every pull request (Node 22 + Chrome + Playwright, ~2 minutes).
+
 ## Keyboard
 
 | Key | Action |
