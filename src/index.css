@@ -13,6 +13,10 @@
   --color-faint: #9B968C;
   --color-amber: #F2B33D;
   --color-amber-deep: #D9A02F;
+  --color-surplus: #3987E5;
+  --color-on-amber: #1B1408;
+  --color-rail: #161412;
+  --color-grid: #26231F;
   --color-good: #41D99A;
   --color-bad: #F26D5B;
   --color-info: #6FA8FF;
@@ -87,8 +91,6 @@ body {
 button, [role="button"] {
   transition: transform 150ms var(--ease-out);
   touch-action: manipulation;
-  user-select: none;
-  -webkit-user-select: none;
   -webkit-touch-callout: none;
 }
 button:not(:disabled):active {
@@ -186,6 +188,11 @@ button:not(:disabled):active {
 .row-hover:hover, .row-hover:focus-within {
   background: var(--color-panel2);
 }
+
+/* Table scroll-edge cue — logical edge (RTL-mirrored) */
+.scroll-edge { box-shadow: inset -14px 0 12px -12px rgba(0,0,0,0.55); }
+[dir="rtl"] .scroll-edge { box-shadow: inset 14px 0 12px -12px rgba(0,0,0,0.55); }
+@media (min-width: 640px) { .scroll-edge { box-shadow: none; } }
 
 /* Sticky table chrome */
 .thead-sticky th {
@@ -289,6 +296,12 @@ tr.row-selected .col-pinned, tr.row-selected:hover .col-pinned { background: #21
 }
 @media (hover: none), (pointer: coarse) {
   .row-hover:hover { background: transparent; }
+}
+
+/* Reduced transparency: drop the blur, keep the scrim opaque enough to read content */
+@media (prefers-reduced-transparency: reduce) {
+  .backdrop-blur-md, .backdrop-blur-sm, .backdrop-blur-lg, .backdrop-blur-\[2px\] { backdrop-filter: none !important; }
+  .anim-overlay { background: rgba(0, 0, 0, 0.75) !important; }
 }
 
 [dir="rtl"] .col-pinned { box-shadow: -1px 0 0 0 var(--color-edge); }

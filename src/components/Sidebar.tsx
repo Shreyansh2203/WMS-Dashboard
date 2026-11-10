@@ -16,11 +16,11 @@ export default function Sidebar({ view, onNavigate, unresolvedCount, waveProgres
   ];
 
   return (
-    <aside className="fixed inset-y-0 start-0 z-30 hidden w-60 flex-col border-s border-edge bg-[#161412] lg:flex">
+    <aside className="fixed inset-y-0 start-0 z-30 hidden w-60 flex-col border-s border-edge bg-rail lg:flex">
       {/* Brand — scan glyph is the signature */}
       <div className="flex items-center gap-3 border-b border-edge px-5 py-4">
         <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-amber" aria-hidden="true">
-          <ScanBarcode size={19} strokeWidth={2.1} className="text-[#1B1408]" />
+          <ScanBarcode size={19} strokeWidth={2.1} className="text-on-amber" />
         </div>
         <div className="leading-tight">
           <div className="text-[15px] font-semibold tracking-[-0.01em] text-text">Recon</div>

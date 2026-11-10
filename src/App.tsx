@@ -4,6 +4,7 @@ import Sidebar, { type View } from './components/Sidebar';
 import TopBar from './components/TopBar';
 import DetailDrawer from './components/DetailDrawer';
 import CommandPalette from './components/CommandPalette';
+import ShortcutsHelp from './components/ShortcutsHelp';
 import Toast from './components/Toast';
 import Overview, { type RangeDays } from './views/Overview';
 import Discrepancies from './views/Discrepancies';
@@ -84,6 +85,7 @@ export default function App() {
   const deferredQuery = useDeferredValue(query);
   const [openId, setOpenId] = useState<string | null>(null);
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [switching, setSwitching] = useState(false);
   const [overrides, setOverrides] = useState<Overrides>(loadOverrides);
   const [resolutions, setResolutions] = useState<ResolutionEntry[]>(loadResolutions);
@@ -115,6 +117,13 @@ export default function App() {
     else url.searchParams.set(SITE_PARAM, siteId);
     window.history.replaceState(null, '', url);
   }, [view, siteId]);
+
+  // client-side route change: move focus to <main> so SR users land on the new view
+  const firstViewRender = useRef(true);
+  useEffect(() => {
+    if (firstViewRender.current) { firstViewRender.current = false; return; }
+    document.getElementById('main-content')?.focus();
+  }, [view]);
 
   // route-level document title (a11y: route changes announce via h1 + title)
   useEffect(() => {
@@ -264,11 +273,11 @@ export default function App() {
   }, [setRecord]);
 
   const handleBulkAssign = useCallback((ids: string[], owner: string | null) => {
-    bulkPatch(ids, { owner }, (n) => (owner ? `${n} ${n === 1 ? 'item' : 'items'} assigned to ${owner}` : `${n} ${n === 1 ? 'item' : 'items'} cleared to Unassigned`));
+    bulkPatch(ids, { owner }, (n) => (owner ? `${n} ${n === 1 ? 'discrepancy' : 'discrepancies'} assigned to ${owner}` : `${n} ${n === 1 ? 'discrepancy' : 'discrepancies'} cleared to Unassigned`));
   }, [bulkPatch]);
 
   const handleBulkResolve = useCallback((ids: string[], rootCause: string) => {
-    bulkPatch(ids, { status: 'Resolved', rootCause }, (n) => `${n} ${n === 1 ? 'item' : 'items'} resolved · ${rootCause} · variance adjustment posted to GL 5310`, true);
+    bulkPatch(ids, { status: 'Resolved', rootCause }, (n) => `${n} ${n === 1 ? 'discrepancy' : 'discrepancies'} resolved · ${rootCause} · variance adjustment posted to GL 5310`, true);
   }, [bulkPatch]);
 
   const handleBulkExport = useCallback((ids: string[]) => {
@@ -314,7 +323,12 @@ export default function App() {
         setPaletteOpen((o) => !o);
         return;
       }
-      if (typing || paletteOpen || openId) return;
+      if (e.key === '?' && !typing) {
+        e.preventDefault();
+        setShortcutsOpen((o) => !o);
+        return;
+      }
+      if (typing || paletteOpen || openId || shortcutsOpen) return;
       if (e.key === '/') {
         e.preventDefault();
         searchRef.current?.focus();
@@ -325,12 +339,12 @@ export default function App() {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [paletteOpen, openId]);
+  }, [paletteOpen, openId, shortcutsOpen]);
 
   // keep drawer honest if a record disappears
   useEffect(() => { if (openId && !records.some((d) => d.id === openId)) setOpenId(null); }, [openId, records]);
 
-  const overlayOpen = paletteOpen || openRecord !== null;
+  const overlayOpen = paletteOpen || openRecord !== null || shortcutsOpen;
 
   return (
     <div className="min-h-screen bg-ink font-sans text-text">
@@ -381,7 +395,7 @@ export default function App() {
         )}
 
         {/* Mobile view switcher (sidebar hidden below lg) */}
-        <nav className="flex gap-1 border-b border-edge bg-[#161412] px-4 py-2 lg:hidden" aria-label="Views">
+        <nav className="flex gap-1 border-b border-edge bg-rail px-4 py-2 lg:hidden" aria-label="Views">
           {([
             { id: 'overview' as View, label: 'Overview', icon: LayoutDashboard },
             { id: 'discrepancies' as View, label: `Discrepancies (${unresolvedCount})`, icon: TableProperties },
@@ -448,6 +462,8 @@ export default function App() {
         onRangeChange={setRangeDays}
         onExportQueue={handleExportQueue}
       />
+
+      <ShortcutsHelp open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
 
       {openRecord && (
         <DetailDrawer

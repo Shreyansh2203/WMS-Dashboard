@@ -22,7 +22,7 @@ export default memo(function ZoneVariance({ stats, rangeDays }: ZoneVarianceProp
       right={
         <div className="flex items-center gap-3 pt-0.5 text-[12px] font-medium text-dim">
           <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-[3px] bg-bad" />Shrink</span>
-          <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-[3px] bg-[#3987e5]" />Surplus</span>
+          <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-[3px] bg-surplus" />Surplus</span>
           <span className="hidden font-mono text-[12px] text-faint sm:inline tnum">Total exposure {fmtMoneyCompact(total)}</span>
         </div>
       }
@@ -52,7 +52,7 @@ export default memo(function ZoneVariance({ stats, rangeDays }: ZoneVarianceProp
                 )}
                 {z.overageValue > 0 && (
                   <div
-                    className="absolute left-1/2 h-[14px] rounded-r-[4px] bg-[#3987e5]"
+                    className="absolute left-1/2 h-[14px] rounded-r-[4px] bg-surplus"
                     style={{ width: `${overPct / 2}%` }}
                   />
                 )}

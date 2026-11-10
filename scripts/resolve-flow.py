@@ -30,9 +30,13 @@ with sync_playwright() as p:
     btn.click()
     page.wait_for_timeout(150)
     post = drawer.get_by_role("button", name="Post adjustment")
-    disabled_before = post.is_disabled()
+    post.click()
+    page.wait_for_timeout(150)
+    error_visible = drawer.locator('#drawer-root-cause-error[role="alert"]').count() > 0
+    focused = page.evaluate("document.activeElement?.id")
     drawer.locator("#drawer-root-cause").select_option("Picking error")
-    disabled_after = post.is_disabled()
+    page.wait_for_timeout(100)
+    error_hidden = drawer.locator('#drawer-root-cause-error').count() == 0
     post.click()
     page.wait_for_timeout(300)
 
@@ -49,8 +53,9 @@ with sync_playwright() as p:
 
     print(json.dumps({
         "ref": ref_id,
-        "disabledBefore": disabled_before,
-        "disabledAfterRootCause": disabled_after,
+        "postWithoutRootCauseBlocksAndAnnounces": error_visible,
+        "focusMovesToRootCauseSelect": focused == "drawer-root-cause",
+        "errorClearsOnSelect": error_hidden,
         "toast": state["toast"],
         "storedOverride": json.loads(state["overrides"]) if state["overrides"] else None,
         "resolvedTextPresent": "Resolved · root cause" in timeline and "Picking error" in timeline,

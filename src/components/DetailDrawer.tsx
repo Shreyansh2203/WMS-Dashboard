@@ -26,7 +26,8 @@ export default function DetailDrawer({ record, onClose, onResolve, onStartInvest
   const [copied, setCopied] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const [rootCause, setRootCause] = useState('');
-  useEffect(() => { setConfirming(false); setRootCause(''); }, [record.id]);
+  const [rootCauseError, setRootCauseError] = useState(false);
+  useEffect(() => { setConfirming(false); setRootCause(''); setRootCauseError(false); }, [record.id]);
   const triggerRef = useRef<Element | null>(null);
   const panelRef = useFocusTrap<HTMLElement>(true);
   const onCloseRef = useRef(onClose);
@@ -249,20 +250,30 @@ export default function DetailDrawer({ record, onClose, onResolve, onStartInvest
                 id="drawer-root-cause"
                 autoFocus
                 value={rootCause}
-                onChange={(e) => setRootCause(e.target.value)}
-                className="mt-1 h-9 w-full appearance-none rounded-lg border border-edge bg-panel3 px-2 text-[12px] font-medium text-text focus:border-amber/50"
+                onChange={(e) => { setRootCause(e.target.value); setRootCauseError(false); }}
+                aria-invalid={rootCauseError || undefined}
+                aria-describedby={rootCauseError ? 'drawer-root-cause-error' : undefined}
+                className={`mt-1 h-9 w-full appearance-none rounded-lg border bg-panel3 px-2 text-[12px] font-medium text-text transition-colors focus:border-amber/50 ${rootCauseError ? 'border-bad/60' : 'border-edge'}`}
               >
                 <option value="">Select root cause…</option>
                 {ROOT_CAUSES.map((c) => <option key={c} value={c}>{c}</option>)}
               </select>
+              {rootCauseError && (
+                <p id="drawer-root-cause-error" role="alert" className="mt-1 text-[12px] font-semibold text-bad">
+                  Select a root cause before posting.
+                </p>
+              )}
               <div className="mt-2 flex items-center gap-2">
                 <button type="button" onClick={() => { setConfirming(false); setRootCause(''); }}
                   className="h-9 rounded-lg border border-edge px-3 text-[12px] font-semibold text-dim transition-colors hover:border-edge2 hover:text-text">
                   Cancel
                 </button>
-                <button type="button" disabled={!rootCause}
-                  onClick={() => { if (!rootCause) return; onResolve(record.id, rootCause); setConfirming(false); setRootCause(''); }}
-                  className="h-9 flex-1 rounded-lg bg-amber text-[12px] font-semibold text-[#1B1408] transition-colors hover:bg-amber-deep disabled:cursor-not-allowed disabled:opacity-40">
+                <button type="button"
+                  onClick={() => {
+                    if (!rootCause) { setRootCauseError(true); document.getElementById('drawer-root-cause')?.focus(); return; }
+                    onResolve(record.id, rootCause); setConfirming(false); setRootCause('');
+                  }}
+                  className="h-9 flex-1 rounded-lg bg-amber text-[12px] font-semibold text-on-amber transition-colors hover:bg-amber-deep">
                   Post adjustment · {record.id}
                 </button>
               </div>
@@ -286,7 +297,7 @@ export default function DetailDrawer({ record, onClose, onResolve, onStartInvest
                 className={`flex h-9 flex-1 items-center justify-center gap-1.5 rounded-lg px-4 text-[12px] font-semibold transition-colors ${
                   resolved
                     ? 'cursor-default border border-good/30 bg-good/10 text-good'
-                    : 'bg-amber text-[#1B1408] transition-colors hover:bg-amber-deep'
+                    : 'bg-amber text-on-amber transition-colors hover:bg-amber-deep'
                 }`}
               >
                 {resolved ? <><Check size={14} aria-hidden="true" /> Resolved</> : <><CircleCheck size={14} aria-hidden="true" /> Mark resolved…</>}

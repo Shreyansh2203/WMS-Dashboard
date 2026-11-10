@@ -65,6 +65,7 @@ export default memo(function DiscrepancyTable({ records, density, query, onQuery
   const [staleOnly, setStaleOnly] = useState(false);
   const [selectedIds, setSelectedIds] = useState<ReadonlySet<string>>(new Set());
   const [bulkRootCause, setBulkRootCause] = useState('');
+  const [bulkRootCauseError, setBulkRootCauseError] = useState(false);
   const [bulkResolving, setBulkResolving] = useState(false);
   const [sortKey, setSortKey] = useState<SortKey>('valueVar');
   const [sortDir, setSortDir] = useState<1 | -1>(-1);
@@ -241,24 +242,30 @@ export default memo(function DiscrepancyTable({ records, density, query, onQuery
               <select
                 id="bulk-root-cause"
                 value={bulkRootCause}
-                onChange={(e) => setBulkRootCause(e.target.value)}
+                onChange={(e) => { setBulkRootCause(e.target.value); setBulkRootCauseError(false); }}
+                aria-invalid={bulkRootCauseError || undefined}
+                aria-describedby={bulkRootCauseError ? 'bulk-root-cause-error' : undefined}
                 autoFocus
-                className={selectCls}
+                className={`${selectCls} ${bulkRootCauseError ? 'border-bad/60' : ''}`}
               >
                 <option value="">Root cause…</option>
                 {ROOT_CAUSES.map((c) => <option key={c} value={c}>{c}</option>)}
               </select>
+              {bulkRootCauseError && (
+                <p id="bulk-root-cause-error" role="alert" className="w-full text-[12px] font-semibold text-bad">
+                  Select a root cause before posting.
+                </p>
+              )}
               <button
                 type="button"
-                disabled={!bulkRootCause}
                 onClick={() => {
-                  if (!bulkRootCause) return;
+                  if (!bulkRootCause) { setBulkRootCauseError(true); document.getElementById('bulk-root-cause')?.focus(); return; }
                   onBulkResolve?.([...selectedIds], bulkRootCause);
                   setSelectedIds(new Set());
                   setBulkResolving(false);
                   setBulkRootCause('');
                 }}
-                className="h-9 sm:h-8 rounded-lg bg-amber px-2.5 text-[12px] font-semibold text-[#1B1408] transition-colors hover:bg-amber-deep disabled:cursor-not-allowed disabled:opacity-40"
+                className="h-9 sm:h-8 rounded-lg bg-amber px-2.5 text-[12px] font-semibold text-on-amber transition-colors hover:bg-amber-deep"
               >
                 Post adjustment ({selectedIds.size})
               </button>
@@ -306,7 +313,7 @@ export default memo(function DiscrepancyTable({ records, density, query, onQuery
               <div className="flex items-start gap-2 p-3">
                 {enableBulk && (
                   <label className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-edge bg-panel3">
-                    <input type="checkbox" checked={selectedIds.has(d.id)} onChange={() => toggleSelect(d.id)} aria-label={`Select ${d.id}`} className="h-5 w-5 accent-[#F2B33D]" />
+                    <input type="checkbox" checked={selectedIds.has(d.id)} onChange={() => toggleSelect(d.id)} aria-label={`Select ${d.id}`} className="h-5 w-5 accent-amber" />
                   </label>
                 )}
                 <button onClick={() => onOpen(d)} aria-label={`Open discrepancy ${d.id}`} className="min-w-0 flex-1 text-start">
@@ -338,7 +345,7 @@ export default memo(function DiscrepancyTable({ records, density, query, onQuery
           )}
         </ul>
       ) : (
-      <div className={`relative overflow-auto overscroll-contain shadow-[inset_-14px_0_12px_-12px_rgba(0,0,0,0.55)] sm:shadow-none ${full ? 'max-h-[640px]' : ''}`}>
+      <div className={`scroll-edge relative overflow-auto overscroll-contain ${full ? 'max-h-[640px]' : ''}`}>
         <table aria-label="Discrepancies" className="thead-sticky w-full min-w-[880px] border-collapse text-start">
           <thead>
             <tr className="border-b border-edge">
@@ -361,7 +368,7 @@ export default memo(function DiscrepancyTable({ records, density, query, onQuery
                         onChange={togglePageSelection}
                         onClick={(e) => e.stopPropagation()}
                         aria-label="Select all rows on this page"
-                        className="h-4 w-4 shrink-0 accent-[#F2B33D]"
+                        className="h-4 w-4 shrink-0 accent-amber"
                       />
                     ) : null}
                     <button
@@ -399,7 +406,7 @@ export default memo(function DiscrepancyTable({ records, density, query, onQuery
                         onChange={() => toggleSelect(d.id)}
                         onClick={(e) => e.stopPropagation()}
                         aria-label={`Select ${d.id}`}
-                        className="h-4 w-4 shrink-0 accent-[#F2B33D]"
+                        className="h-4 w-4 shrink-0 accent-amber"
                       />
                     )}
                     <button

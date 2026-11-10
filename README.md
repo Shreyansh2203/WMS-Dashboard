@@ -41,6 +41,7 @@ and every pull request (Node 22 + Chrome + Playwright, ~2 minutes).
 | `↑` `↓` (in table) | Move between row buttons |
 | `Enter` | Open discrepancy |
 | `Esc` | Close palette / drawer / popovers |
+| `?` | Open keyboard shortcuts reference |
 
 ## Design direction
 

@@ -4,10 +4,10 @@ import ChartCard from './ChartCard';
 import type { Insight } from '../data/mock';
 
 const TONE_DOT: Record<Insight['tone'], string> = {
-  bad: '#F26D5B',
-  warn: '#F2B33D',
-  good: '#41D99A',
-  info: '#6FA8FF',
+  bad: 'var(--color-bad)',
+  warn: 'var(--color-amber)',
+  good: 'var(--color-good)',
+  info: 'var(--color-info)',
 };
 
 function iconFor(insight: Insight) {

@@ -52,14 +52,14 @@ export default memo(function AccuracyTrend({ series, rangeDays }: AccuracyTrendP
           <ComposedChart data={data} accessibilityLayer={false} margin={{ top: 10, right: 2, bottom: 0, left: -8 }}>
             <defs>
               <linearGradient id="accuracy-fill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#ECE8DF" stopOpacity={0.16} />
-                <stop offset="100%" stopColor="#ECE8DF" stopOpacity={0} />
+                <stop offset="0%" stopColor="var(--color-text)" stopOpacity={0.16} />
+                <stop offset="100%" stopColor="var(--color-text)" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid vertical={false} stroke="#26231F" strokeDasharray="2 7" />
+            <CartesianGrid vertical={false} stroke="var(--color-grid)" strokeDasharray="2 7" />
             <XAxis
               dataKey="label"
-              tick={{ fill: '#9B968C', fontSize: 12, fontFamily: 'IBM Plex Mono' }}
+              tick={{ fill: 'var(--color-faint)', fontSize: 12, fontFamily: 'IBM Plex Mono' }}
               tickLine={false}
               axisLine={false}
               minTickGap={30}
@@ -68,14 +68,14 @@ export default memo(function AccuracyTrend({ series, rangeDays }: AccuracyTrendP
             />
             <YAxis
               domain={[yMin, 100.0]}
-              tick={{ fill: '#9B968C', fontSize: 12, fontFamily: 'IBM Plex Mono' }}
+              tick={{ fill: 'var(--color-faint)', fontSize: 12, fontFamily: 'IBM Plex Mono' }}
               tickLine={false}
               axisLine={false}
               tickFormatter={(v: number) => `${v.toFixed(1)}%`}
               width={50}
             />
             <Tooltip
-              cursor={{ stroke: '#3B3831', strokeDasharray: '3 3' }}
+              cursor={{ stroke: 'var(--color-edge2)', strokeDasharray: '3 3' }}
               content={({ active, payload }) => {
                 if (!active || !payload?.length) return null;
                 const p = payload[0].payload;
@@ -97,16 +97,16 @@ export default memo(function AccuracyTrend({ series, rangeDays }: AccuracyTrendP
             />
             <ReferenceLine
               y={ACCURACY_TARGET}
-              stroke="#F2B33D"
+              stroke="var(--color-amber)"
               strokeDasharray="4 4"
               strokeOpacity={0.65}
-              label={{ value: `Target ${ACCURACY_TARGET}%`, position: 'insideTopRight', fill: '#F2B33D', fontSize: 11, fontFamily: 'IBM Plex Mono', dy: -2 }}
+              label={{ value: `Target ${ACCURACY_TARGET}%`, position: 'insideTopRight', fill: 'var(--color-amber)', fontSize: 11, fontFamily: 'IBM Plex Mono', dy: -2 }}
             />
             <Line
               type="monotone"
               dataKey="prior"
               name="Prior period"
-              stroke="#7E7A72"
+              stroke="var(--color-faint)"
               strokeWidth={1.5}
               strokeDasharray="5 4"
               dot={false}
@@ -117,15 +117,15 @@ export default memo(function AccuracyTrend({ series, rangeDays }: AccuracyTrendP
               type="monotone"
               dataKey="accuracy"
               name="This period"
-              stroke="#ECE8DF"
+              stroke="var(--color-text)"
               strokeWidth={2.4}
               fill="url(#accuracy-fill)"
               dot={(props: { index?: number; cx?: number; cy?: number }) =>
                 props.index === data.length - 1
-                  ? <circle key={`endpoint-${props.index}`} cx={props.cx} cy={props.cy} r={3.5} fill="#F2B33D" stroke="#14110F" strokeWidth={1.5} />
+                  ? <circle key={`endpoint-${props.index}`} cx={props.cx} cy={props.cy} r={3.5} fill="var(--color-amber)" stroke="var(--color-ink)" strokeWidth={1.5} />
                   : <g key={`endpoint-${props.index}`} />
               }
-              activeDot={{ r: 4, strokeWidth: 0, fill: '#F2B33D' }}
+              activeDot={{ r: 4, strokeWidth: 0, fill: 'var(--color-amber)' }}
             />
           </ComposedChart>
         </ResponsiveContainer>

@@ -35,10 +35,10 @@ export default function Discrepancies({
   }, [records]);
 
   const chips = [
-    { label: 'Open', value: fmtInt(stats.open), dot: '#F2B33D' },
-    { label: 'Investigating', value: fmtInt(stats.investigating), dot: '#6FA8FF' },
-    { label: 'Resolved · 28d', value: fmtInt(stats.resolved), dot: '#41D99A' },
-    { label: 'Value at risk', value: `$${fmtInt(stats.valueAtRisk)}`, dot: '#F26D5B' },
+    { label: 'Open', value: fmtInt(stats.open), dotCls: 'bg-amber' },
+    { label: 'Investigating', value: fmtInt(stats.investigating), dotCls: 'bg-info' },
+    { label: 'Resolved · 28d', value: fmtInt(stats.resolved), dotCls: 'bg-good' },
+    { label: 'Value at risk', value: `$${fmtInt(stats.valueAtRisk)}`, dotCls: 'bg-bad' },
   ];
 
   const logForSite = useMemo(
@@ -66,9 +66,9 @@ export default function Discrepancies({
 
       {/* Status summary */}
       <div className="rise rise-2 grid grid-cols-2 gap-3 md:grid-cols-4">
-        {chips.map(({ label, value, dot }) => (
+        {chips.map(({ label, value, dotCls }) => (
           <div key={label} className="panel flex items-center gap-3 px-4 py-3">
-            <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: dot }} aria-hidden="true" />
+            <span className={`h-2 w-2 shrink-0 rounded-full ${dotCls}`} aria-hidden="true" />
             <div className="min-w-0">
               <div className="text-[10px] font-medium text-faint">{label}</div>
               <div className="tnum mt-0.5 font-mono text-[17px] font-medium leading-none text-text">{value}</div>

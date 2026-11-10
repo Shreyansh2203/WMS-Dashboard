@@ -108,7 +108,7 @@ export default function StreamWatchdog({ siteCode, rowsApplied, onToast, onState
   // move focus into the non-modal dialog so screen readers announce it
   useEffect(() => { if (open) popRef.current?.focus(); }, [open]);
 
-  const dot = state_ === 'live' ? '#41D99A' : state_ === 'syncing' ? '#F2B33D' : state_ === 'stale' ? '#F2B33D' : '#F26D5B';
+  const dot = state_ === 'live' ? 'var(--color-good)' : state_ === 'syncing' ? 'var(--color-amber)' : state_ === 'stale' ? 'var(--color-amber)' : 'var(--color-bad)';
   const label = state_ === 'live' ? 'Live' : state_ === 'syncing' ? 'Syncing…' : state_ === 'stale' ? 'Stale' : 'Offline';
   const sub = state_ === 'live' ? fmtAgo(secondsAgo) : state_ === 'syncing' ? 'polling WMS…' : state_ === 'stale' ? `last confirmed ${fmtAgo(secondsAgo)}` : 'connection lost';
 

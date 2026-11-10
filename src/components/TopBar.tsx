@@ -81,7 +81,7 @@ export default function TopBar({
   const attentionShown = criticalItems;
 
   return (
-    <header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-edge bg-[#171512]/92 px-4 backdrop-blur-md sm:px-5">
+    <header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-edge bg-rail/90 px-4 backdrop-blur-md sm:px-5">
       {/* Warehouse switcher */}
       <div className="relative min-w-0 shrink-0" ref={sitePop.ref} onKeyDown={onSiteKeyDown}>
         <button

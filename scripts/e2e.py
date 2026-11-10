@@ -95,19 +95,26 @@ def main() -> int:
         assign_count = page.evaluate("Object.keys(JSON.parse(localStorage.getItem('recon:overrides:v2') ?? '{}')).length")
         ok("bulk assign persists overrides", assign_count == 2, f"overrides={assign_count}")
 
-        # 6. bulk resolve requires root cause; re-select the same two rows
+        # 6. bulk resolve blocks posting until a root cause is chosen (validates on click, error announced)
         for i in actionable:
             page.locator("tbody tr.row-hover").nth(i).locator("input[type=checkbox]").check()
         page.wait_for_timeout(150)
         page.get_by_role("button", name="Resolve…").click()
         page.wait_for_timeout(150)
         post = page.get_by_role("button", name=re.compile(r"Post adjustment"))
-        disabled_before = post.is_disabled()
-        page.locator("#bulk-root-cause").select_option("Picking error")
-        disabled_after = post.is_disabled()
+        state_before_click = page.evaluate("localStorage.getItem('recon:overrides:v2')")
         post.click()
-        page.wait_for_timeout(500)
-        ok("bulk resolve requires root cause", disabled_before and not disabled_after, f"before={disabled_before} after={disabled_after}")
+        page.wait_for_timeout(150)
+        state_after_click = page.evaluate("localStorage.getItem('recon:overrides:v2')")
+        error_visible = page.locator("#bulk-root-cause-error").count() > 0
+        focused = page.evaluate("document.activeElement?.id")
+        page.locator("#bulk-root-cause").select_option("Picking error")
+        page.wait_for_timeout(100)
+        error_hidden = page.locator("#bulk-root-cause-error").count() == 0
+        post.click()
+        page.wait_for_timeout(400)
+        unchanged = state_before_click == state_after_click
+        ok("bulk resolve blocks posting until root cause", error_visible and focused == "bulk-root-cause" and unchanged and error_hidden, f"error_visible={error_visible} focused={focused} unchanged={unchanged}")
 
         # 7. resolution ledger records the batch and supports revert
         log = json.loads(page.evaluate("localStorage.getItem('recon:resolutions:v1') ?? '[]'"))
